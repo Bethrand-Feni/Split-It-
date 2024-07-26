@@ -7,9 +7,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Simple Screen',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       home: IntroScreen(),
     );
   }
@@ -21,6 +18,7 @@ class IntroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       body: Column(
         children: [
           Expanded(
