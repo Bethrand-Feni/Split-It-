@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:splitit/pages/intro.dart';
+
 
 
 class MyApp extends StatelessWidget {
@@ -22,29 +24,62 @@ class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
-      body: Column(
+      backgroundColor: Colors.grey[100],
+      body: Stack(
         children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(100.0, 250.0, 0.0, 0.0),
+        Positioned(
+        top: 100.0,
+        left: 0,
+        right: 0,
+        child: Container(
+          height: 200.0, // Set a specific height for the image container
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/scissorsmoney.png'),
+                fit: BoxFit.cover, // Ensure the image covers the container
+              )
+          ),
+        ),
+      ),
+          Positioned(
+            bottom: -100,
+            left: 0,
+            right: 0,
+            child: Container(
+            height: 600.0, // Set a specific height for the image container
+            decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/rblue.png'),
+                  // Ensure the image covers the container
+                )
+        ))
+          ),
+          const Positioned(
+            bottom: 300,
+            left: 75,
+            right: 0,
             child: Text("R40 is split",
             style: TextStyle(
-              fontSize: 40
-            ),),
+              fontSize: 50
+            ),
+            ),
           ),
-          Expanded(
-            child: Container(
+          Positioned(
+            bottom: 100,
+            left: 0,
+            right: 0,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(100.0, 100.0, 0.0, 0.0),
-                    child: ElevatedButton(onPressed: getter, child: Text("->")),
-                  )
+                  ElevatedButton(onPressed: (){
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => IntroScreen())
+                    );
+                  }, child: Text("->")),
                 ],
               ),
             ),
-          ),
         ],
       ),
     );

@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:splitit/pages/result.dart';
 
 
@@ -22,29 +24,32 @@ class InputScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.brown,
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(60.0, 250.0,0.0,0.0),
-              child: Text("Input info here", style: TextStyle(
-                fontSize: 40.0
-              ),),
-            ),
+          const Positioned(
+            top: 200,
+            left: 60,
+            right: 0,
+            child: Text("Input info here", style: TextStyle(
+              fontSize: 40.0
+            ),),
+
           ),
-          Expanded(
-            child: Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(onPressed: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ResultScreen()),
-                    );
-                  }, child: Text("->"))
-                ],
-              ),
+          Positioned(
+            bottom: 100,
+            left: 0,
+            right: 0,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+
+                ElevatedButton(onPressed: (){
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => ResultScreen()),
+                  );
+                }, child: Text("->"))
+              ],
             ),
           ),
         ],

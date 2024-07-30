@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:splitit/pages/input.dart';
 
 
@@ -19,43 +21,49 @@ class IntroScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0),
+          Positioned(
+              top: 100.0,
+              left: 0,
+              right: 0,
               child: Container(
-                decoration: BoxDecoration(
+                height: 200.0, // Set a specific height for the image container
+                decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/scissorsmoney.png')
+                    image: AssetImage('assets/scissorsmoney.png'),
+                    fit: BoxFit.cover, // Ensure the image covers the container
                   )
                 ),
               ),
             ),
-          ),
-          Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 150.0, 0.0, 0.0),
-                child: Text("Split it?",
-                  style: TextStyle(
-                    fontSize: 40.0
-                  ),),
-              )),
-          Expanded(
-            child: Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(onPressed: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => InputScreen()),
-                  );
-                }, child: Text("->"))
-              ],
+          const Positioned(
+            top: 500.0,
+            left: 130,
+            right: 0,
+            child: Text("Split it?",
+              style: TextStyle(
+                fontSize: 40.0
+              ),),
             ),
+            Positioned(
+              bottom: 100.0,
+              left: 0,
+              right: 0,
+              child: Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(onPressed: (){
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => InputScreen()),
+                    );
+                  }, child: Text("->"))
+                ],
+              ),
+              ),
             ),
-          ),
         ],
       ),
     );
