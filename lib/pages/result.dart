@@ -65,7 +65,7 @@ class ResultScreen extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 100,
+            bottom: 50,
             left: 0,
             right: 0,
               child: Column(

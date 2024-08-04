@@ -24,8 +24,15 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.splitit"
-    compileSdk flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
+    compileSdk 34  // Use a fixed value for compileSdkVersion
+
+    defaultConfig {
+        applicationId "com.example.splitit"
+        minSdk 20
+        targetSdk 34
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -38,17 +45,6 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
-    }
-
-    defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.splitit"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
     }
 
     buildTypes {
@@ -64,4 +60,6 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    // Add your dependencies here
+}

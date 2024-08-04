@@ -9,7 +9,7 @@ void main() {
       initialRoute: '/',
       routes:{
         '/' : (context) => IntroScreen(),
-        '/input': (context) => InputScreen(),
+        '/input': (context) => Input(),
         '/location': (context) => ResultScreen(),
       }
   ));

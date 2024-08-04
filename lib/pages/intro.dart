@@ -47,7 +47,7 @@ class IntroScreen extends StatelessWidget {
               ),),
             ),
             Positioned(
-              bottom: 100.0,
+              bottom: 50.0,
               left: 0,
               right: 0,
               child: Container(
@@ -57,7 +57,7 @@ class IntroScreen extends StatelessWidget {
                   ElevatedButton(onPressed: (){
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => InputScreen()),
+                      MaterialPageRoute(builder: (context) => Input()),
                     );
                   }, child: Text("->"))
                 ],
