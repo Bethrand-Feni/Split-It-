@@ -7,7 +7,6 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:splitit/pages/intro.dart';
 import 'package:splitit/pages/result.dart';
 
 void main() {
@@ -132,7 +131,7 @@ class _Input extends State<Input> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _unleaded ? Colors.green[200] : Colors.grey[200],
+                    backgroundColor: _unleaded ? Colors.grey[100] : Colors.grey[500],
                   ),
                   child: const Text('Unleaded'),
                 ),
@@ -145,7 +144,7 @@ class _Input extends State<Input> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: !_unleaded ? Colors.green[200] : Colors.grey[200],
+                    backgroundColor: !_unleaded ? Colors.grey[100] : Colors.grey[500],
                   ),
                   child: const Text('Diesel'),
                 ),
@@ -228,9 +227,17 @@ class _Input extends State<Input> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[400],
+      backgroundColor: Colors.grey[200],
       body: Stack(
         children: [
+          Positioned(
+            top: 20,
+            left: 25,
+            right: 0,
+            child: SizedBox(
+              height: 100,
+                width: 250,
+                child: Image.asset('assets/dog.gif'))),
           Positioned(
             top: 100,
             left: 0,
