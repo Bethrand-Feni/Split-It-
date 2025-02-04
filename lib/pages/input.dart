@@ -1,11 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:google_maps_webservice/places.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/model/place_type.dart';
+import 'package:google_places_flutter/model/prediction.dart';
+
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 import 'package:splitit/pages/result.dart';
 
@@ -19,6 +22,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        colorScheme: const ColorScheme.light(
+          primary: Colors.blue, // Active step color
+          secondary: Colors.orange, // Completed step and connector color
+        ),
       ),
       home: Input(),
     );
@@ -31,6 +38,18 @@ class Input extends StatefulWidget {
 }
 
 class _Input extends State<Input> {
+  final TextEditingController _startController = TextEditingController();
+  final TextEditingController _endController = TextEditingController();
+  final apiKey = 'AIzaSyBJoiQcj44Atm9w0lYo-URYXRTKiNZr6RE';
+
+
+  double _startLat = 0.0;
+  double _startLng = 0.0;
+
+  double _endLat = 0.0;
+  double _endLng = 0.0;
+
+
   int _currentStep = 0;
   double _sliderValue = 1.0;
 
@@ -48,201 +67,17 @@ class _Input extends State<Input> {
   String _distance = '';
   bool _unleaded = true;
 
-  GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "YOUR_API_KEY");
-
-  List<Step> _getSteps() {
-    return [
-      Step(
-        title: Text('Addresses'),
-        content: Form(
-          key: _formKey4,
-          child: Column(
-            children: [
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Start Address'),
-                onTap: () async {
-                  Prediction? p = await PlacesAutocomplete.show(
-                    context: context,
-                    apiKey: "YOUR_API_KEY",
-                    mode: Mode.overlay, // Mode.fullscreen
-                    language: "en",
-                  );
-                  if (p != null) {
-                    PlacesDetailsResponse detail =
-                    await _places.getDetailsByPlaceId(p.placeId!);
-                    setState(() {
-                      _startAddress = detail.result.formattedAddress!;
-                    });
-                  }
-                },
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter the start address';
-                  }
-                  return null;
-                },
-                controller: TextEditingController(text: _startAddress),
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'End Address'),
-                onTap: () async {
-                  Prediction? p = await PlacesAutocomplete.show(
-                    context: context,
-                    apiKey: "YOUR_API_KEY",
-                    mode: Mode.overlay, // Mode.fullscreen
-                    language: "en",
-                  );
-                  if (p != null) {
-                    PlacesDetailsResponse detail =
-                    await _places.getDetailsByPlaceId(p.placeId!);
-                    setState(() {
-                      _endAddress = detail.result.formattedAddress!;
-                    });
-                  }
-                },
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter the end address';
-                  }
-                  return null;
-                },
-                controller: TextEditingController(text: _endAddress),
-              ),
-              if (_distance.isNotEmpty) ...[
-                SizedBox(height: 20),
-                Text('Distance: $_distance'),
-              ]
-            ],
-          ),
-        ),
-        isActive: _currentStep >= 0,
-      ),
-      Step(
-        title: const Text('Fuel Type'),
-        content: Form(
-          key: _formKey1,
-          child: Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _unleaded = true;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _unleaded ? Colors.grey[100] : Colors.grey[500],
-                  ),
-                  child: const Text('Unleaded'),
-                ),
-              ),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _unleaded = false;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: !_unleaded ? Colors.grey[100] : Colors.grey[500],
-                  ),
-                  child: const Text('Diesel'),
-                ),
-              ),
-            ],
-          ),
-        ),
-        isActive: _currentStep >= 1,
-      ),
-      Step(
-        title: Text('L/100km'),
-        content: Form(
-          key: _formKey2,
-          child: TextFormField(
-            decoration: InputDecoration(labelText: 'Enter your cars L/100km'),
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter your email';
-              }
-              return null;
-            },
-            onSaved: (value) {
-              _email = value!;
-            },
-          ),
-        ),
-        isActive: _currentStep >= 2,
-      ),
-      Step(
-        title: Text('People'),
-        content: Column(
-          children: [
-            Text(
-              'People: ${_sliderValue.toInt()}',
-              style: const TextStyle(fontSize: 20),
-            ),
-            Slider(
-              value: _sliderValue,
-              min: 1,
-              max: 10,
-              divisions: 9,
-              label: _sliderValue.round().toString(),
-              onChanged: (double newValue) {
-                setState(() {
-                  _sliderValue = newValue;
-                });
-              },
-            ),
-          ],
-        ),
-        isActive: _currentStep >= 3,
-      ),
-    ];
-  }
-
-  void _calculateDistance() async {
-    // final response = await http.get(Uri.parse(
-    //     'https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=$_startAddress&destinations=$_endAddress&key=YOUR_API_KEY'));
-    // final json = jsonDecode(response.body);
-    // final distance = json['rows'][0]['elements'][0]['distance']['text'];
-    // setState(() {
-    //   _distance = distance;
-    // });
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => ResultScreen()),
-    );
-  }
-
-  void _submit() {
-    // You can save data here
-    print('Name: $_name');
-    print('Email: $_email');
-    print('Password: $_password');
-    print('Start Address: $_startAddress');
-    print('End Address: $_endAddress');
-    print('Distance: $_distance');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.grey[100],
       body: Stack(
         children: [
-          Positioned(
-            top: 20,
-            left: 25,
-            right: 0,
-            child: SizedBox(
-              height: 100,
-                width: 250,
-                child: Image.asset('assets/dog.gif'))),
           Positioned(
             top: 100,
             left: 0,
             right: 0,
-            child: Stepper(
+            child: Stepper( //Need to understand
               currentStep: _currentStep,
               steps: _getSteps(),
               onStepTapped: (step) {
@@ -253,16 +88,20 @@ class _Input extends State<Input> {
               onStepContinue: () {
                 if (_currentStep < _getSteps().length - 1) {
                   setState(() {
-                    if (_currentStep == 0 && _formKey4.currentState!.validate()) {
+                    if (_currentStep == 0 &&
+                        _formKey4.currentState!.validate()) {
                       _formKey4.currentState!.save();
                       _currentStep += 1;
-                    } else if (_currentStep == 1 && _formKey1.currentState!.validate()) {
+                    } else if (_currentStep == 1 &&
+                        _formKey1.currentState!.validate()) {
                       _formKey1.currentState!.save();
                       _currentStep += 1;
-                    } else if (_currentStep == 2 && _formKey2.currentState!.validate()) {
+                    } else if (_currentStep == 2 &&
+                        _formKey2.currentState!.validate()) {
                       _formKey2.currentState!.save();
                       _currentStep += 1;
-                    } else if (_currentStep == 3 && _formKey3.currentState!.validate()) {
+                    } else if (_currentStep == 3 &&
+                        _formKey3.currentState!.validate()) {
                       _formKey3.currentState!.save();
                       _currentStep += 1;
                     }
@@ -270,7 +109,7 @@ class _Input extends State<Input> {
                 } else {
                   if (_formKey4.currentState!.validate()) {
                     _formKey4.currentState!.save();
-                    _submit();
+                    // _submit();
                   }
                 }
               },
@@ -300,5 +139,222 @@ class _Input extends State<Input> {
         ],
       ),
     );
+  }
+
+  placesAutoCompleteTextFieldStart(controller) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: GooglePlaceAutoCompleteTextField(
+        textEditingController: controller,
+        googleAPIKey: apiKey,
+        inputDecoration: InputDecoration(
+          hintText: "Search your location",
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+        ),
+        debounceTime: 400,
+        countries: ["za"],
+        isLatLngRequired: true,
+        getPlaceDetailWithLatLng: (Prediction prediction) {
+          print("placeDetails" + prediction.lat.toString());
+          print("placeDetails" + prediction.lng.toString());
+        },
+
+        itemClick: (Prediction prediction) {
+          controller.text = prediction.description ?? "";
+          controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: prediction.description?.length ?? 0));
+
+          _startLat = prediction.lat != null ? prediction.lat as double : 0.0;
+          _startLng = prediction.lng != null ? prediction.lng as double : 0.0;
+        },
+        seperatedBuilder: Divider(),
+        containerHorizontalPadding: 10,
+
+        isCrossBtnShown: true,
+
+        // default 600 ms ,
+      ),
+    );
+  }
+
+  placesAutoCompleteTextFieldEnd(controller) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: GooglePlaceAutoCompleteTextField(
+        textEditingController: controller,
+        googleAPIKey: apiKey,
+        inputDecoration: InputDecoration(
+          hintText: "Search your location",
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+        ),
+        debounceTime: 400,
+        countries: ["za"],
+        isLatLngRequired: true,
+        getPlaceDetailWithLatLng: (Prediction prediction) {
+          print("placeDetails" + prediction.lat.toString());
+          print("placeDetails" + prediction.lng.toString());
+        },
+
+        itemClick: (Prediction prediction) {
+          controller.text = prediction.description ?? "";
+          controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: prediction.description?.length ?? 0));
+
+          _endLat = prediction.lat != null ? prediction.lat as double : 0.0;
+          _endLng = prediction.lng != null ? prediction.lng as double : 0.0;
+        },
+        seperatedBuilder: Divider(),
+        containerHorizontalPadding: 10,
+
+        isCrossBtnShown: true,
+
+        // default 600 ms ,
+      ),
+    );
+  }
+
+  List<Step> _getSteps() {
+    return [
+      Step(
+        title: Text('Addresses'),
+        content: Form(
+          key: _formKey4,
+          child: Column(
+            children: [
+              placesAutoCompleteTextFieldStart(_startController),
+              placesAutoCompleteTextFieldEnd(_endController),
+              if (_distance.isNotEmpty) ...[
+                SizedBox(height: 20),
+                Text('Distance: $_distance'),
+              ]
+            ],
+          ),
+        ),
+        isActive: _currentStep >= 0,
+      ),
+      Step(
+        title: const Text('Fuel Type'),
+        content: Form(
+          key: _formKey1,
+          child: Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _unleaded = true;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                    _unleaded ? Colors.grey[100] : Colors.grey[500],
+                  ),
+                  child: const Text('Unleaded'),
+                ),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _unleaded = false;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                    !_unleaded ? Colors.grey[100] : Colors.grey[500],
+                  ),
+                  child: const Text('Diesel'),
+                ),
+              ),
+            ],
+          ),
+        ),
+        isActive: _currentStep >= 1,
+      ),
+      Step(
+        title: Text('L/100km'),
+        content: Form(
+          key: _formKey2,
+          child: TextFormField(
+            decoration: InputDecoration(labelText: 'Enter your cars L/100km'),
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Please enter your email';
+              }
+              return null;
+            },
+            onSaved: (value) { // wouldnt I need to set state?
+              _email = value!; //! for?
+            },
+          ),
+        ),
+        isActive: _currentStep >= 2,
+      ),
+      Step(
+        title: Text('People'),
+        content: Column(
+          children: [
+            Text(
+              'People: ${_sliderValue.toInt()}',
+              style: const TextStyle(fontSize: 20),
+            ),
+            Slider(
+              value: _sliderValue,
+              min: 1,
+              max: 10,
+              divisions: 9,
+              label: _sliderValue.round().toString(),
+              onChanged: (
+                  double newValue) { // how does it know to equate the change to NewValue?
+                setState(() {
+                  _sliderValue = newValue;
+                });
+              },
+            ),
+          ],
+        ),
+        isActive: _currentStep >= 3,
+      ),
+    ];
+  }
+
+  void _calculateDistance() async {
+    final url = Uri.parse(
+      'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$_startLat,$_startLng&destinations=$_endLat,$_endLng&key=$apiKey',
+    );
+
+    final response = await http.get(url);
+
+    print(response);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'OK') {
+        _distance = data['rows'][0]['elements'][0]['distance']['text'];
+        // _duration = data['rows'][0]['elements'][0]['duration']['text'];
+        print('Distance: ${_distance}');
+        // print('Duration: $duration');
+
+      } else {
+        print('Error: ${data['status']}');
+      }
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ResultScreen()),
+      );
+    }
+
+  //   void _submit() {
+  //     // You can save data here
+  //     print('Name: $_name');
+  //     print('Email: $_email');
+  //     print('Password: $_password');
+  //     print('Start Address: $_startAddress');
+  //     print('End Address: $_endAddress');
+  //     print('Distance: $_distance');
+  //   }
   }
 }

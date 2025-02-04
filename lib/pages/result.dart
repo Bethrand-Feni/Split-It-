@@ -27,40 +27,34 @@ class ResultScreen extends StatelessWidget {
       backgroundColor: Colors.grey[100],
       body: Stack(
         children: [
-        Positioned(
-        top: 100.0,
-        left: 0,
-        right: 0,
-        child: Container(
-          height: 200.0, // Set a specific height for the image container
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/scissorsmoney.png'),
-                fit: BoxFit.cover, // Ensure the image covers the container
+          Positioned(
+              bottom: -100,
+              left: 0,
+              right: 0,
+              child: Image.asset("assets/images/rpurpled.png")),
+          Positioned(
+              top: 200.0,
+              left: 0,
+              right: 0,
+              child: CircleAvatar(
+                  radius: 150,
+                  child: ClipOval(
+                      child: Image.asset('assets/images/dog.gif',
+                        fit: BoxFit.cover,
+                        width: 300,
+                        height: 300,)
+                  )
               )
           ),
-        ),
-      ),
           Positioned(
-            bottom: -100,
-            left: 0,
-            right: 0,
-            child: Container(
-            height: 600.0, // Set a specific height for the image container
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/rblue.png'),
-                  // Ensure the image covers the container
-                )
-        ))
-          ),
-          const Positioned(
-            bottom: 300,
+            top: 100,
             left: 75,
             right: 0,
-            child: Text("R40 is split",
+            child: Text("R40 is the split!",
             style: TextStyle(
-              fontSize: 50
+              fontWeight: FontWeight.bold,
+              fontSize: 40,
+              color: Colors.deepPurple[100]
             ),
             ),
           ),
@@ -80,6 +74,7 @@ class ResultScreen extends StatelessWidget {
                 ],
               ),
             ),
+
         ],
       ),
     );

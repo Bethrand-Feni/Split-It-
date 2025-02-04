@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:splitit/pages/input.dart';
 
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget {//difference between stateless and stateful
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,30 +20,39 @@ class IntroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.deepPurple[100],
       body: Stack(
         children: [
           Positioned(
-              top: 100.0,
+              top: 0,
               left: 0,
               right: 0,
-              child: Container(
-                height: 200.0, // Set a specific height for the image container
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/scissorsmoney.png'),
-                    fit: BoxFit.cover, // Ensure the image covers the container
+              child: Image.asset("assets/images/rwhiteup.png")
+          ),
+          Positioned(
+              top: 200.0,
+              left: 0,
+              right: 0,
+              child: CircleAvatar(
+                  radius: 150,
+                  child: ClipOval(
+                      child: Image.asset('assets/images/dog.gif',
+                        fit: BoxFit.cover,
+                        width: 300,
+                        height: 300,)
                   )
-                ),
-              ),
+              )
             ),
-          const Positioned(
-            top: 500.0,
-            left: 130,
+           Positioned(
+            top: 100.0,
+            left: 120,
             right: 0,
             child: Text("Split it?",
               style: TextStyle(
-                fontSize: 40.0
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple[100],
+                fontFamily: 'Edu Australia VIC WA NT Hand',//TODO check if it works
+                fontSize: 50.0
               ),),
             ),
             Positioned(
