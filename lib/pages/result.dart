@@ -5,24 +5,34 @@ import 'package:splitit/pages/intro.dart';
 
 
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Input screen',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: ResultScreen(),
-    );
-  }
-}
 
 class ResultScreen extends StatelessWidget {
-  get getter => null;
+  final Map<String, dynamic> calculationData;
+  const ResultScreen({required this.calculationData});
+
+
+
+  String calculateFuelShare(String distanceStr, double fuelPrice, double people, double efficiency) {
+    double distance = double.parse(distanceStr.replaceAll(RegExp(r'[^0-9.]'), ''));
+
+    double fuelCost = (distance / 100) * efficiency * fuelPrice; // Total fuel cost
+    double costPerPerson = fuelCost / people; // Split cost per person
+
+    return costPerPerson.toStringAsFixed(2); // Return as a formatted string
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
+    print(calculationData);
+    String cost = calculateFuelShare(
+      calculationData["distance"], // Convert distance to string
+      calculationData["fuelPrice"],          // Fuel price as double
+      calculationData["people"],              // Number of people as int
+      calculationData["efficiency"],          // Efficiency as double
+    );
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: Stack(
@@ -50,7 +60,7 @@ class ResultScreen extends StatelessWidget {
             top: 100,
             left: 75,
             right: 0,
-            child: Text("R40 is the split!",
+            child: Text("R${cost} is the split!",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 40,
@@ -78,6 +88,8 @@ class ResultScreen extends StatelessWidget {
         ],
       ),
     );
+
+
   }
 }
 
