@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:splitit/pages/intro.dart';
+import 'package:splitit/pages/input.dart';
 
 
 
@@ -78,7 +78,7 @@ class ResultScreen extends StatelessWidget {
                   ElevatedButton(onPressed: (){
                     Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => IntroScreen())
+                        MaterialPageRoute(builder: (context) => Input())
                     );
                   }, child: Text("->")),
                 ],

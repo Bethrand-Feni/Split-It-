@@ -11,8 +11,7 @@ void main() async{
   runApp(MaterialApp(
       initialRoute: '/',
       routes:{
-        '/' : (context) => IntroScreen(),
-        '/input': (context) => Input(),
+        '/' : (context) => SplashScreen(),
       }
   ));
 }
