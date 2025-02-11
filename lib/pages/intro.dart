@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     // Navigate to the Input page (or your main page) after 3 seconds
-    Timer(Duration(seconds: 15), () {
+    Timer(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => Input()), // Change this to your actual main screen
@@ -26,6 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: const Color(0xFFE4EEFF),
       body: Stack(
         children: [
